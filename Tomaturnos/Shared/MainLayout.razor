@@ -16,3 +16,16 @@
         </div>
     </main>
 </div>
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        MunicipioState.OnChange += async () => await InvokeAsync(StateHasChanged);
+    }
+   
+    public void Dispose()
+    {
+        MunicipioState.OnChange -= StateHasChanged;
+    }
+}

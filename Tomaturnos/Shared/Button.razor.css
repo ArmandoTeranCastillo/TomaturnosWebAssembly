@@ -1,0 +1,27 @@
+.custom-button {
+    background-color: #4CAF50; /* Verde */
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    padding: 0 32px; /* Solo padding lateral */
+    height: 100%; /* Para asegurar que el height se tome del style */
+}
+
+.custom-button:hover {
+    background-color: #45a049;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.custom-button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}

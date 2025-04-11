@@ -1,0 +1,9 @@
+.elegantcontent {
+    padding-top: 1.1rem;
+}
+
+.elegantcentered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
