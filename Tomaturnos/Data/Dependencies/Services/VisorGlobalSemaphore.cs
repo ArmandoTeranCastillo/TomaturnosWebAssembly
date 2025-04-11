@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Serilog;
 
 namespace TomaTurnos.Data.Dependencies.Services
 {
@@ -19,7 +18,7 @@ namespace TomaTurnos.Data.Dependencies.Services
         private readonly ConcurrentDictionary<(string ConnectionId, int ModuloId), SemaphoreQueue> _globalQueues = new();
         public void EnqueueUpdate(string connectionId, int moduloId, string eventType, bool delay, Func<Task> updateAction)
         {
-            Log.Information("EnqueueUpdate: {ConnectionId}, {ModuloId}, {EventType}", connectionId, moduloId, eventType);
+            Console.WriteLine("EnqueueUpdate: {0}, {1}, {2}", connectionId, moduloId, eventType);
             
             (string connectionId, int moduloId) key = (connectionId, moduloId);
             SemaphoreQueue semaphoreQueue = _globalQueues.GetOrAdd(key, _ => new SemaphoreQueue());
@@ -41,14 +40,15 @@ namespace TomaTurnos.Data.Dependencies.Services
             }
             else
             {
-                Log.Error("No se encontró el evento {EventType} en el mapeo de eventos", eventType);
+                Console.WriteLine("No se encontró el evento {0} en el mapeo de eventos", eventType);
             }
         }
 
         // Procesamiento de la cola
         private static async Task ProcessQueue(SemaphoreSlim semaphore, ConcurrentQueue<Func<Task>> queue, bool delay)
         {
-            Log.Information("ProcessQueue: {QueueCount}", queue.Count);
+            Console.WriteLine("ProcessQueue: {0}", queue.Count);
+            
             await semaphore.WaitAsync();
             try
             {
@@ -64,7 +64,7 @@ namespace TomaTurnos.Data.Dependencies.Services
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Error al procesar la cola");
+                Console.WriteLine(ex.Message, "Error al procesar la cola");
             }
             finally
             {
