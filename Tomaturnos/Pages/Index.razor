@@ -1,9 +1,15 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Tomaturnos</PageTitle>
 
-<h1>Hello, world!</h1>
+@code {
+    private bool _isNavigated;
 
-Welcome to your new app.
-
-<SurveyPrompt Title="How is Blazor working for you?" />
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender || _isNavigated) return;
+        Navigation.NavigateTo("/SelectorMunicipio", true);
+        _isNavigated = true; // Para asegurarte de que la navegación solo se realiza una vez
+    }
+}
