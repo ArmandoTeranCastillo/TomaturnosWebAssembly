@@ -1,4 +1,4 @@
-@page "/Turnos/{moduloId:int}"
+@page "/Turnos/{moduloId}"
 @using TomaTurnos.Data.Dependencies.Services
 @using TomaTurnos.Data.Dependencies.Services.Requests
 @using TomaTurnos.Data.Models
@@ -10,56 +10,56 @@
 <div class="turnos-background p-4 d-flex flex-column" style="height: 86vh; overflow: auto">
     @if (!string.IsNullOrEmpty(_errorMessage))
     {
-    <div class="alert alert-danger" role="alert">
-        @_errorMessage
-    </div>
+        <div class="alert alert-danger" role="alert">
+            @_errorMessage
+        </div>
     }
     else
     {
-    <!-- Lista de Capturas -->
-    <div class="turnos-content d-flex flex-row justify-content-between" style="height: calc(100% - 120px); width: 100%"> <!-- Ajustar según el tamaño real del footer -->
         <!-- Lista de Capturas -->
-        <div class="d-flex flex-column justify-content-center" style="width: 35%;">
-            @foreach (CapturasDto turno in _capturas)
-            {
-            <ElegantContainer>
-                <div class="d-flex flex-row justify-content-center mx-1">
-                    <span class="turnos-numero turnos-numero-container">@turno.Equipo</span>
-                    <span class="turnos-nombre turnos-nombre-container text-center" style="width: 100%">@turno.Turno</span>
-                </div>
-            </ElegantContainer>
-            }
-        </div>
+        <div class="turnos-content d-flex flex-row justify-content-between" style="height: calc(100% - 120px); width: 100%"> <!-- Ajustar según el tamaño real del footer -->
+            <!-- Lista de Capturas -->
+            <div class="d-flex flex-column justify-content-center" style="width: 35%;">
+                @foreach (CapturasDto turno in _capturas)
+                {
+                    <ElegantContainer>
+                        <div class="d-flex flex-row justify-content-center mx-1">
+                            <span class="turnos-numero turnos-numero-container">@turno.Equipo</span>
+                            <span class="turnos-nombre turnos-nombre-container text-center" style="width: 100%">@turno.Turno</span>
+                        </div>
+                    </ElegantContainer>
+                }
+            </div>
 
-        <div class="align-self-center turno-actual flex-grow-1" style="width: 100%;">
-            <!-- Turno Actual -->
-            <ElegantContainer>
-                <div class="d-flex flex-row align-items-center justify-content-center mx-1">
-                    <span class="turno-actual-container turno-actual-nombre">@_turnoActual.Nombre</span>
-                    <div class="d-flex flex-column align-items-center modulo-container p-3">
-                        <span class="modulo-nombre">Módulo</span>
-                        <span class="modulo-numero">@_turnoActual.NumeroCaptura</span>
+            <div class="align-self-center turno-actual flex-grow-1" style="width: 100%;">
+                <!-- Turno Actual -->
+                <ElegantContainer>
+                    <div class="d-flex flex-row align-items-center justify-content-center mx-1">
+                        <span class="turno-actual-container turno-actual-nombre">@_turnoActual.Nombre</span>
+                        <div class="d-flex flex-column align-items-center modulo-container p-3">
+                            <span class="modulo-nombre">Módulo</span>
+                            <span class="modulo-numero">@_turnoActual.NumeroCaptura</span>
+                        </div>
                     </div>
-                </div>
-            </ElegantContainer>
+                </ElegantContainer>
 
-            <!-- Turnos Pendientes -->
-            <div class="mt-1 mb-5">
-                <div class="d-flex flex-row justify-content-center">
-                    @foreach (Turno turno in _turnos)
-                    {
-                    <div class="col-md-3 p-2">
-                        <ElegantContainer>
-                            <div class="text-center">
-                                <span class="turnos-nombre turnos-nombre-container">@turno.Nombre</span>
+                <!-- Turnos Pendientes -->
+                <div class="mt-1 mb-5">
+                    <div class="d-flex flex-row justify-content-center">
+                        @foreach (Turno turno in _turnos)
+                        {
+                            <div class="col-md-3 p-2">
+                                <ElegantContainer>
+                                    <div class="text-center">
+                                        <span class="turnos-nombre turnos-nombre-container">@turno.Nombre</span>
+                                    </div>
+                                </ElegantContainer>
                             </div>
-                        </ElegantContainer>
+                        }
                     </div>
-                    }
                 </div>
             </div>
         </div>
-    </div>
     }
 
     <!-- Leyenda de prioridad como footer animado -->
@@ -67,3 +67,151 @@
         <span>En esta Dirección se les otorga prioridad a las personas con capacidades diferentes, de la tercera edad y mujeres en estado de gravidez avanzado. Por su comprensión gracias!</span>
     </div>
 </div>
+
+
+@code
+{
+     [Parameter]
+        public int ModuloId { get; set; }
+    
+        private List<CapturasDto> _capturas = [];
+        private List<Turno> _turnos = [];
+        private Turno _turnoActual = new();
+        private string _errorMessage = string.Empty;
+
+        // Eventos
+        private bool _isVisorInitialized;
+        
+        protected override async Task OnInitializedAsync()
+        {
+            if (!_isVisorInitialized) 
+            {
+                try
+                {
+                    // Suscribirse a eventos de SignalRService
+                    SignalRService.OnCapturas += UpdateCapturas;
+                    SignalRService.OnTurnoActual += UpdateTurnoActual;
+                    SignalRService.OnTurnosPendientes += UpdateTurnosPendientes;
+                    SignalRService.OnConsole += OnConsole;
+
+                    // Obtener información del módulo
+                    MunicipioState.Municipio = await TurnosService.GetModulo(ModuloId);
+
+                    // Iniciar la conexión con SignalR
+                    await SignalRService.Start(ModuloId);
+
+                    // Actualizar Visor
+                    await TurnosService.ActualizarVisor(ModuloId);
+
+                    _isVisorInitialized = true;
+                }
+                catch (Exception ex)
+                {
+                    _errorMessage = "Error de conexión. Por favor, inténtelo nuevamente más tarde.";
+                    await OnConsole("Error al inicializar el visor: " + ex.Message, TypeLog.Error);
+                }
+            }
+        }
+
+        private Task UpdateCapturas(List<CapturasDto> capturas, bool delay)
+        {
+            _capturas = capturas.OrderBy(c => int.TryParse(c.Equipo, out int n) ? n : 0).ToList();
+            InvokeAsync(StateHasChanged); 
+            return Task.CompletedTask;
+        }
+
+        private Task UpdateTurnoActual(Turno turno, AudioDto audio, bool delay)
+        {
+            _turnoActual = turno;
+
+            // Ejecuta ambos métodos en paralelo
+            Task turnoTask = OnTurnoReceived(turno);
+            Task audioTask = OnAudioReceived(turno.Nombre, audio);
+
+            // Espera a que ambos terminen sin bloquear la UI
+            InvokeAsync(StateHasChanged);
+
+            return Task.WhenAll(turnoTask, audioTask);
+        }
+
+        private Task UpdateTurnosPendientes(List<Turno> turnos, bool delay)
+        {
+            _turnos = turnos;
+            InvokeAsync(StateHasChanged); 
+            return Task.CompletedTask;
+        }
+
+        private async Task OnTurnoReceived(Turno turno)
+        {
+            await OnConsole("Recibiendo turno: " + turno.Nombre, TypeLog.Information);
+            try
+            {
+                await JsRuntime.InvokeVoidAsync("addTurnoActualAnimation");
+            }
+            catch (Exception e)
+            {
+                await OnConsole("Error al recibir turno: " + turno.Nombre + e.Message, TypeLog.Error);
+            }
+        }
+
+        private async Task OnAudioReceived(string turno, AudioDto audio)
+        {
+            await OnConsole("Recibiendo audio para el turno: " + turno, TypeLog.Information);
+            try
+            {
+                // Detener cualquier audio en reproducción
+                await JsRuntime.InvokeVoidAsync("stopAudio");
+                
+                // Obtener audio de la API
+                AudioDto audioFromApi = await TurnosService.GetAudio(audio.Id ?? 0);
+
+                if (audioFromApi.Content is { Length: > 0 })
+                {
+                    string base64Audio = Convert.ToBase64String(audioFromApi.Content);
+                    await JsRuntime.InvokeVoidAsync("playAudioWithoutSave", base64Audio);
+                }
+                else
+                {
+                    await OnConsole("No se encontró audio para el turno: " + turno, TypeLog.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                await OnConsole("Error al reproducir audio para el turno: " + turno + ex.Message, TypeLog.Error);
+            }
+        }
+        
+        private async Task OnConsole(string message, TypeLog type)
+        {
+            string logMessage = $"Log: {message}"; 
+
+            switch (type)
+            {
+                case TypeLog.Information:
+                    Console.WriteLine("{0}", logMessage);
+                    await JsRuntime.InvokeVoidAsync("console.info", message);
+                    break;
+                case TypeLog.Warning:
+                    Console.WriteLine("{0}", logMessage);
+                    await JsRuntime.InvokeVoidAsync("console.warn", message);
+                    break;
+                case TypeLog.Error:
+                    Console.WriteLine("{0}", logMessage);
+                    await JsRuntime.InvokeVoidAsync("console.error", message);
+                    break;
+                default:
+                    await JsRuntime.InvokeVoidAsync("console.log", message);
+                    break;
+            }
+        }
+
+        public void Dispose()
+        {
+            SignalRService.OnCapturas -= UpdateCapturas;
+            SignalRService.OnTurnoActual -= UpdateTurnoActual;
+            SignalRService.OnTurnosPendientes -= UpdateTurnosPendientes;
+            SignalRService.Dispose();
+
+            GC.SuppressFinalize(this);
+        }
+}
