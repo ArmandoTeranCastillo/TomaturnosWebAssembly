@@ -13,9 +13,14 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Configurar HttpClient
-builder.Services.AddScoped(_ => new HttpClient 
-{ 
-    BaseAddress = new Uri(Variables.GetApiUrl()) 
+builder.Services.AddScoped(_ =>
+{
+    HttpClient httpClient = new()
+    {
+        BaseAddress = new Uri(Variables.GetApiUrl())
+    };
+
+    return httpClient;
 });
 
 // Registrar servicios
