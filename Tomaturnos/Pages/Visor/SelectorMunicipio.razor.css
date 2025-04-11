@@ -19,7 +19,21 @@
     font-size: 1.4rem;
 }
 
-.button-container{
-    margin: 15px;
-    font-size: 1.4rem;
+.municipio-background{
+    background-color: #867A88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding-bottom: 300px;
+}
+
+.municipio-page{
+    display: flex;
+}
+
+.municipio-content{
+    width: 100%;
+    max-width: 800px;
+    transform: translateY(-150px);
 }

@@ -100,3 +100,9 @@ a, .btn-link {
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
+.button-container{
+    margin: 15px;
+    font-size: 1.4rem;
+}
+
+

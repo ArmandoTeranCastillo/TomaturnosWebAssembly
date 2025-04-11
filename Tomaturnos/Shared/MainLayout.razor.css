@@ -105,25 +105,6 @@ main {
     background-color: white;
 }
 
-.municipio-background{
-    background-color: #867A88;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    padding-bottom: 300px;
-}
-
-.municipio-page{
-    display: flex;
-}
-
-.municipio-content{
-    width: 100%;
-    max-width: 800px;
-    transform: translateY(-150px);
-}
-
 .centered{
     display: flex;
     justify-content: center;
