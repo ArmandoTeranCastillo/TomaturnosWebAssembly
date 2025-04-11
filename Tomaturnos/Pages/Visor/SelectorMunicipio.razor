@@ -1,0 +1,39 @@
+@page "/SelectorMunicipio"
+@using TomaTurnos.Data.Dependencies.Services
+@using TomaTurnos.Data.Dependencies.Services.Requests
+@using TomaTurnos.Data.Models
+@inject NavigationManager Navigation
+@inject ITurnosService TurnosService
+@inject MunicipioState MunicipioState
+
+<div class="municipio-background context p-4">
+    <div class="municipio-content">
+        <ElegantContainer>
+            <div class="d-flex flex-column align-items-center">
+                <h3 class="municipio-title">Municipio</h3>
+
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @_errorMessage
+                    </div>
+                }
+                else
+                {
+                    <div class="combo-container">
+                        <select @bind="_selectedMunicipioId" style="width: 80%; color: #696161;">
+                            @foreach (Modulo modulo in _modulos)
+                            {
+                                <option class="municipio-content" value="@modulo.IdModulo">@modulo.Nombre</option>
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="button-container">
+                        <Button Width="100px" Height="40px" Text="OK" Click="GoToTurnos"></Button>
+                    </div>
+                }
+            </div>
+        </ElegantContainer>
+    </div>
+</div>

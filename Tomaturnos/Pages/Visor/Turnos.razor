@@ -1,0 +1,69 @@
+@page "/Turnos/{moduloId:int}"
+@using TomaTurnos.Data.Dependencies.Services
+@using TomaTurnos.Data.Dependencies.Services.Requests
+@using TomaTurnos.Data.Models
+@inject IJSRuntime JsRuntime
+@inject ISignalRService SignalRService
+@inject ITurnosService TurnosService
+@inject MunicipioState MunicipioState
+
+<div class="turnos-background p-4 d-flex flex-column" style="height: 86vh; overflow: auto">
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+    <div class="alert alert-danger" role="alert">
+        @_errorMessage
+    </div>
+    }
+    else
+    {
+    <!-- Lista de Capturas -->
+    <div class="turnos-content d-flex flex-row justify-content-between" style="height: calc(100% - 120px); width: 100%"> <!-- Ajustar según el tamaño real del footer -->
+        <!-- Lista de Capturas -->
+        <div class="d-flex flex-column justify-content-center" style="width: 35%;">
+            @foreach (CapturasDto turno in _capturas)
+            {
+            <ElegantContainer>
+                <div class="d-flex flex-row justify-content-center mx-1">
+                    <span class="turnos-numero turnos-numero-container">@turno.Equipo</span>
+                    <span class="turnos-nombre turnos-nombre-container text-center" style="width: 100%">@turno.Turno</span>
+                </div>
+            </ElegantContainer>
+            }
+        </div>
+
+        <div class="align-self-center turno-actual flex-grow-1" style="width: 100%;">
+            <!-- Turno Actual -->
+            <ElegantContainer>
+                <div class="d-flex flex-row align-items-center justify-content-center mx-1">
+                    <span class="turno-actual-container turno-actual-nombre">@_turnoActual.Nombre</span>
+                    <div class="d-flex flex-column align-items-center modulo-container p-3">
+                        <span class="modulo-nombre">Módulo</span>
+                        <span class="modulo-numero">@_turnoActual.NumeroCaptura</span>
+                    </div>
+                </div>
+            </ElegantContainer>
+
+            <!-- Turnos Pendientes -->
+            <div class="mt-1 mb-5">
+                <div class="d-flex flex-row justify-content-center">
+                    @foreach (Turno turno in _turnos)
+                    {
+                    <div class="col-md-3 p-2">
+                        <ElegantContainer>
+                            <div class="text-center">
+                                <span class="turnos-nombre turnos-nombre-container">@turno.Nombre</span>
+                            </div>
+                        </ElegantContainer>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Leyenda de prioridad como footer animado -->
+    <div class="leyenda animated-text">
+        <span>En esta Dirección se les otorga prioridad a las personas con capacidades diferentes, de la tercera edad y mujeres en estado de gravidez avanzado. Por su comprensión gracias!</span>
+    </div>
+</div>

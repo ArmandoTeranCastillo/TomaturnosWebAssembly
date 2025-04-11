@@ -1,0 +1,25 @@
+
+.combo-container {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
+.municipio-title{
+    color: #696161; 
+    text-align: center; 
+    font-size: 2.0rem; 
+    font-weight: bold;
+    margin: 10px;
+}
+
+.municipio-content{
+    font-size: 1.4rem;
+}
+
+.button-container{
+    margin: 15px;
+    font-size: 1.4rem;
+}

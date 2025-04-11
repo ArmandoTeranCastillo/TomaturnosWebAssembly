@@ -1,0 +1,20 @@
+<button class="custom-button" style="width: @Width; height: @Height;" @onclick="OnButtonClick">@Text</button>
+
+@code {
+    private void OnButtonClick()
+    {
+        Click.InvokeAsync(null);
+    }
+
+    [Parameter]
+    public string Width { get; set; } = "100%";
+    
+    [Parameter]
+    public string Height { get; set; } = "30px";
+    
+    [Parameter]
+    public string Text { get; set; } = "Click me!";
+    
+    [Parameter]
+    public EventCallback Click { get; set; }
+}

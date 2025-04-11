@@ -1,0 +1,22 @@
+<select @bind="_selectedValue" class="custom-combobox" style="color: @ItemColor; width: @Width">
+    @foreach (string item in _items)
+    {
+        <option style="color: @ItemColor" value="@item">@item</option>
+    }
+</select>
+
+@code {
+    private readonly List<string> _items = new() { "Seleccione el municipio", "Chihuahua", "Juárez", "Delicias" };
+    private string _selectedValue = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _selectedValue = _items[0];
+    }
+    
+    [Parameter]
+    public string ItemColor { get; set; } = "black";
+    
+    [Parameter]
+    public string Width { get; set; } = "100%";
+}

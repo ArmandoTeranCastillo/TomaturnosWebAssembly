@@ -1,17 +1,18 @@
-﻿@inherits LayoutComponentBase
+﻿@using TomaTurnos.Data.Dependencies.Services
+@inherits LayoutComponentBase
+@inject MunicipioState MunicipioState
+
+<PageTitle>TomaTurnos</PageTitle>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+        <div class="px-5 container-images">
+            <span class="modulo-titulo">@MunicipioState.Municipio</span>
+            <img class="image image-secretaria" src="images/Secretaria.png" alt="Secretaría"/>
+            <img class="image image-chihuahua" src="images/LogoChihuahua.png" alt="Chihuahua"/>
         </div>
-
-        <article class="content px-4">
+        <div>
             @Body
-        </article>
+        </div>
     </main>
 </div>
