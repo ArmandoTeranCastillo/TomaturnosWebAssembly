@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+using Tomaturnos.Data.Dependencies;
 using TomaTurnos.Data.Models;
 
 namespace TomaTurnos.Data.Dependencies.Services.Requests
@@ -11,13 +11,15 @@ namespace TomaTurnos.Data.Dependencies.Services.Requests
         Task ActualizarVisor(int idModulo);
     }
     
-    public class TurnosService(HttpClient http) : ITurnosService
+    public class TurnosService : ITurnosService
     {
+        private readonly string _baseUrl = Variables.GetApiUrl();
         public async Task<List<Modulo>> GetModulos()
         {
             try
             {
-                List<Modulo>? response = await http.GetFromJsonAsync<List<Modulo>>("VisorTomaturnos/GetModulos");
+                string url = $"{_baseUrl}VisorTomaturnos/GetModulos";
+                List<Modulo>? response = await Http.GetAsync<List<Modulo>>(url);
                 
                 if (response == null)
                 {
@@ -37,7 +39,8 @@ namespace TomaTurnos.Data.Dependencies.Services.Requests
         {
             try
             {
-                Modulo? response = await http.GetFromJsonAsync<Modulo>($"VisorTomaturnos/GetModulo?moduloId={moduloId}");
+                string url = $"{_baseUrl}VisorTomaturnos/GetModulo?moduloId={moduloId}";
+                Modulo? response = await Http.GetAsync<Modulo>(url);
                 
                 if (response == null)
                 {
@@ -57,7 +60,8 @@ namespace TomaTurnos.Data.Dependencies.Services.Requests
         {
             try
             {
-                AudioDto? response = await http.GetFromJsonAsync<AudioDto>($"VisorTomaturnos/GetAudio?audioId={audioId}");
+                string url = $"{_baseUrl}VisorTomaturnos/GetAudio?audioId={audioId}";
+                AudioDto? response = await Http.GetAsync<AudioDto>(url);
                 
                 if (response == null)
                 {
@@ -77,7 +81,8 @@ namespace TomaTurnos.Data.Dependencies.Services.Requests
         {
             try
             {
-                await http.GetAsync($"VisorTomaturnos/ActualizarVisor?idModulo={idModulo}");
+                string url = $"{_baseUrl}VisorTomaturnos/ActualizarVisor?idModulo={idModulo}";
+                await Http.GetAsync(url);
             }
             catch (Exception e)
             {

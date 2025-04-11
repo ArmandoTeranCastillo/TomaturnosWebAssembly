@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TomaTurnos.Data.Dependencies.Services;
 using TomaTurnos.Data.Dependencies.Services.Requests;
 using Tomaturnos;
-using TomaTurnos.Data.Dependencies;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -11,24 +10,9 @@ WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// Configurar HttpClient
-builder.Services.AddScoped(_ =>
-{
-    HttpClient httpClient = new()
-    {
-        BaseAddress = new Uri(Variables.GetApiUrl())
-    };
-
-    return httpClient;
-});
-
 // Registrar servicios
 builder.Services.AddScoped<ISignalRService, SignalRService>();
 builder.Services.AddScoped<MunicipioState>();
-builder.Services.AddScoped<ITurnosService, TurnosService>(sp => 
-{
-    HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-    return new TurnosService(httpClient);
-});
+builder.Services.AddScoped<ITurnosService, TurnosService>();
 
 await builder.Build().RunAsync();
