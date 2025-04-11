@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using TomaTurnos.Data.Dependencies.Services;
 using TomaTurnos.Data.Dependencies.Services.Requests;
-using TomaTurnos.Data.Dependencies.Transients;
 using Tomaturnos;
 using TomaTurnos.Data.Dependencies;
 
@@ -26,15 +25,6 @@ builder.Services.AddScoped(_ =>
 // Registrar servicios
 builder.Services.AddScoped<ISignalRService, SignalRService>();
 builder.Services.AddScoped<MunicipioState>();
-
-// Registrar servicios personalizados
-builder.Services.AddScoped<IHttpService, HttpService>(sp => 
-{
-    HttpClient httpClient = sp.GetRequiredService<HttpClient>();
-    TurnosService turnosService = new(httpClient);
-    return new HttpService(httpClient, turnosService);
-});
-
 builder.Services.AddScoped<ITurnosService, TurnosService>(sp => 
 {
     HttpClient httpClient = sp.GetRequiredService<HttpClient>();
