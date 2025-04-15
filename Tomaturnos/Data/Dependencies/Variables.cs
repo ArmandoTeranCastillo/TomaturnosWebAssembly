@@ -4,7 +4,7 @@ namespace TomaTurnos.Data.Dependencies
     {
         public static string GetApiUrl()
         {
-            const string apiUrl = "http://localhost:5058/api/";
+            const string apiUrl = "http://10.169.3.223/APICUU/api/";
             return apiUrl; 
         }                                
     }
